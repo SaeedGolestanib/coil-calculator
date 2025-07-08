@@ -6,8 +6,24 @@
     <meta name="author" content="سعید گلستانی">
     <title>محاسبه‌گر بهینه‌سازی برش کویل ورق</title>
     <style>
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('font/vazirmatn-extrabold.woff2') format('woff2');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('font/vazirmatn-bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        
         body {
-            font-family: 'Vazirimath', sans-serif;
+            font-family: 'Vazirmatn', sans-serif;
             margin: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -28,6 +44,7 @@
             color: #333;
             margin-bottom: 15px;
             font-size: 2.2em;
+            font-weight: 800;
             background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -46,6 +63,7 @@
         .author-section p {
             color: #495057;
             font-size: 1.1em;
+            font-weight: 700;
             margin: 0;
         }
         
@@ -61,6 +79,7 @@
             color: #495057;
             margin-bottom: 15px;
             font-size: 1.5em;
+            font-weight: 700;
         }
         
         .input-group {
@@ -77,7 +96,7 @@
         
         label {
             margin-bottom: 5px;
-            font-weight: bold;
+            font-weight: 700;
             color: #495057;
         }
         
@@ -86,6 +105,7 @@
             border: 2px solid #ced4da;
             border-radius: 5px;
             font-size: 16px;
+            font-family: 'Vazirmatn', sans-serif;
             transition: border-color 0.3s;
         }
         
@@ -95,15 +115,27 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
+        input.error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
         .calculate-btn {
-            font-family: 'Vazirimath', sans-serif;
-			background: linear-gradient(45deg, #667eea, #764ba2);
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             color: white;
             padding: 12px 30px;
             border: none;
             border-radius: 25px;
             font-size: 18px;
-            font-weight: bold;
+            font-weight: 700;
             cursor: pointer;
             transition: transform 0.3s, box-shadow 0.3s;
             display: block;
@@ -133,11 +165,12 @@
             color: #495057;
             margin-bottom: 10px;
             font-size: 1.2em;
+            font-weight: 700;
         }
         
         .result-value {
             font-size: 1.5em;
-            font-weight: bold;
+            font-weight: 800;
             color: #667eea;
         }
         
@@ -182,7 +215,7 @@
             justify-content: center;
             font-size: 10px;
             color: white;
-            font-weight: bold;
+            font-weight: 700;
         }
         
         .waste-area {
@@ -201,6 +234,7 @@
         .optimize-info h4 {
             color: #0c5460;
             margin-bottom: 10px;
+            font-weight: 700;
         }
         
         .optimize-info p {
@@ -219,6 +253,7 @@
         .instructions h3 {
             color: #856404;
             margin-bottom: 10px;
+            font-weight: 700;
         }
         
         .instructions ul {
@@ -230,6 +265,26 @@
         .instructions li {
             margin: 5px 0;
         }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
     </style>
 </head>
 <body>
@@ -239,13 +294,18 @@
             <p>نویسنده: سعید گلستانی</p>
         </div>
         
+        <div class="alert alert-danger" id="errorAlert">
+            <strong>خطا!</strong> <span id="errorMessage"></span>
+        </div>
+        
         <div class="instructions">
             <h3>راهنمای استفاده:</h3>
             <ul>
-                <li>وزن کویل را به کیلوگرم وارد کنید</li>
-                <li>عرض کویل را به میلی‌متر وارد کنید</li>
-                <li>ضخامت کویل را به میلی‌متر وارد کنید</li>
-                <li>ابعاد ورق مورد نیاز را به متر وارد کنید</li>
+                <li>وزن کویل را به کیلوگرم وارد کنید (فقط اعداد مثبت)</li>
+                <li>عرض کویل را به میلی‌متر وارد کنید (فقط اعداد مثبت)</li>
+                <li>ضخامت کویل را به میلی‌متر وارد کنید (فقط اعداد مثبت)</li>
+                <li>دانسیته را تنظیم کنید (پیش‌فرض: 7.85 گرم/سانتی‌متر مکعب)</li>
+                <li>ابعاد ورق مورد نیاز را به متر وارد کنید (فقط اعداد مثبت)</li>
                 <li>دکمه محاسبه را فشار دهید</li>
             </ul>
         </div>
@@ -255,19 +315,23 @@
             <div class="input-group">
                 <div class="input-item">
                     <label for="coilWeight">وزن کویل (کیلوگرم):</label>
-                    <input type="number" id="coilWeight" step="0.1" placeholder="مثال: 1000">
+                    <input type="number" id="coilWeight" step="0.1" placeholder="مثال: 1000" min="0.1">
+                    <div class="error-message" id="coilWeightError">لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
                 </div>
                 <div class="input-item">
                     <label for="coilWidth">عرض کویل (میلی‌متر):</label>
-                    <input type="number" id="coilWidth" step="0.1" placeholder="مثال: 1250">
+                    <input type="number" id="coilWidth" step="0.1" placeholder="مثال: 1250" min="0.1">
+                    <div class="error-message" id="coilWidthError">لطفاً عرض کویل را به صورت عدد مثبت وارد کنید</div>
                 </div>
                 <div class="input-item">
                     <label for="coilThickness">ضخامت کویل (میلی‌متر):</label>
-                    <input type="number" id="coilThickness" step="0.01" placeholder="مثال: 0.5">
+                    <input type="number" id="coilThickness" step="0.01" placeholder="مثال: 0.5" min="0.01">
+                    <div class="error-message" id="coilThicknessError">لطفاً ضخامت کویل را به صورت عدد مثبت وارد کنید</div>
                 </div>
                 <div class="input-item">
                     <label for="density">دانسیته (گرم/سانتی‌متر مکعب):</label>
-                    <input type="number" id="density" value="7.85" step="0.01" readonly>
+                    <input type="number" id="density" value="7.85" step="0.01" min="0.01">
+                    <div class="error-message" id="densityError">لطفاً دانسیته را به صورت عدد مثبت وارد کنید</div>
                 </div>
             </div>
         </div>
@@ -277,11 +341,13 @@
             <div class="input-group">
                 <div class="input-item">
                     <label for="sheetLength">طول ورق (متر):</label>
-                    <input type="number" id="sheetLength" step="0.01" placeholder="مثال: 2.5">
+                    <input type="number" id="sheetLength" step="0.01" placeholder="مثال: 2.5" min="0.01">
+                    <div class="error-message" id="sheetLengthError">لطفاً طول ورق را به صورت عدد مثبت وارد کنید</div>
                 </div>
                 <div class="input-item">
                     <label for="sheetWidth">عرض ورق (متر):</label>
-                    <input type="number" id="sheetWidth" step="0.01" placeholder="مثال: 1.2">
+                    <input type="number" id="sheetWidth" step="0.01" placeholder="مثال: 1.2" min="0.01">
+                    <div class="error-message" id="sheetWidthError">لطفاً عرض ورق را به صورت عدد مثبت وارد کنید</div>
                 </div>
             </div>
         </div>
@@ -325,7 +391,61 @@
     </div>
 
     <script>
+        // اضافه کردن event listener برای اعتبارسنجی ورودی‌ها
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = ['coilWeight', 'coilWidth', 'coilThickness', 'density', 'sheetLength', 'sheetWidth'];
+            
+            inputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                input.addEventListener('input', function() {
+                    validateInput(inputId);
+                });
+                input.addEventListener('blur', function() {
+                    validateInput(inputId);
+                });
+            });
+        });
+
+        function validateInput(inputId) {
+            const input = document.getElementById(inputId);
+            const errorElement = document.getElementById(inputId + 'Error');
+            const value = parseFloat(input.value);
+            
+            // بررسی اعداد منفی، صفر یا غیر عددی
+            if (isNaN(value) || value <= 0) {
+                input.classList.add('error');
+                errorElement.style.display = 'block';
+                return false;
+            } else {
+                input.classList.remove('error');
+                errorElement.style.display = 'none';
+                return true;
+            }
+        }
+
+        function showAlert(message, type = 'danger') {
+            const alert = document.getElementById('errorAlert');
+            const messageElement = document.getElementById('errorMessage');
+            
+            alert.className = `alert alert-${type}`;
+            messageElement.textContent = message;
+            alert.style.display = 'block';
+            
+            // پنهان کردن خودکار بعد از 5 ثانیه
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        function hideAlert() {
+            const alert = document.getElementById('errorAlert');
+            alert.style.display = 'none';
+        }
+
         function calculateOptimization() {
+            // پنهان کردن پیام خطای قبلی
+            hideAlert();
+            
             // دریافت مقادیر ورودی
             const coilWeight = parseFloat(document.getElementById('coilWeight').value);
             const coilWidth = parseFloat(document.getElementById('coilWidth').value);
@@ -334,33 +454,53 @@
             const sheetLength = parseFloat(document.getElementById('sheetLength').value);
             const sheetWidth = parseFloat(document.getElementById('sheetWidth').value);
 
-            // بررسی صحت داده‌ها
-            if (!coilWeight || !coilWidth || !coilThickness || !sheetLength || !sheetWidth) {
-                alert('لطفاً تمام فیلدها را پر کنید');
+            // اعتبارسنجی کامل
+            const inputs = [
+                {id: 'coilWeight', value: coilWeight, name: 'وزن کویل'},
+                {id: 'coilWidth', value: coilWidth, name: 'عرض کویل'},
+                {id: 'coilThickness', value: coilThickness, name: 'ضخامت کویل'},
+                {id: 'density', value: density, name: 'دانسیته'},
+                {id: 'sheetLength', value: sheetLength, name: 'طول ورق'},
+                {id: 'sheetWidth', value: sheetWidth, name: 'عرض ورق'}
+            ];
+
+            let hasError = false;
+            let errorMessages = [];
+
+            inputs.forEach(input => {
+                if (isNaN(input.value) || input.value <= 0) {
+                    hasError = true;
+                    errorMessages.push(`${input.name} باید عدد مثبت باشد`);
+                    validateInput(input.id);
+                }
+            });
+
+            if (hasError) {
+                showAlert(errorMessages.join(', '), 'danger');
+                return;
+            }
+
+            // بررسی منطقی بودن ابعاد
+            if (sheetLength * 1000 > coilWidth || sheetWidth * 1000 > coilWidth) {
+                showAlert('ابعاد ورق نسبت به عرض کویل بزرگ است', 'danger');
                 return;
             }
 
             // محاسبه طول کویل
-            // وزن = حجم × دانسیته
-            // حجم = طول × عرض × ضخامت
-            // طول = وزن / (عرض × ضخامت × دانسیته)
-            
-            const coilWidthCm = coilWidth / 10; // تبدیل میلی‌متر به سانتی‌متر
-            const coilThicknessCm = coilThickness / 10; // تبدیل میلی‌متر به سانتی‌متر
-            const coilWeightGram = coilWeight * 1000; // تبدیل کیلوگرم به گرم
+            const coilWidthCm = coilWidth / 10;
+            const coilThicknessCm = coilThickness / 10;
+            const coilWeightGram = coilWeight * 1000;
             
             const coilLengthCm = coilWeightGram / (coilWidthCm * coilThicknessCm * density);
-            const coilLengthM = coilLengthCm / 100; // تبدیل به متر
+            const coilLengthM = coilLengthCm / 100;
 
             // تبدیل ابعاد به میلی‌متر برای محاسبه
             const sheetLengthMm = sheetLength * 1000;
             const sheetWidthMm = sheetWidth * 1000;
-
-            // محاسبه بهینه‌سازی برش
             const coilLengthMm = coilLengthM * 1000;
 
-            // دو حالت برش: طولی و عرضی
-            // حالت 1: برش طولی (طول ورق در جهت طول کویل)
+            // محاسبه بهینه‌سازی برش
+            // حالت 1: برش طولی
             const sheets1_length = Math.floor(coilLengthMm / sheetLengthMm);
             const sheets1_width = Math.floor(coilWidth / sheetWidthMm);
             const totalSheets1 = sheets1_length * sheets1_width;
@@ -369,7 +509,7 @@
             const totalArea1 = coilLengthMm * coilWidth;
             const waste1 = ((totalArea1 - usedArea1) / totalArea1) * 100;
 
-            // حالت 2: برش عرضی (عرض ورق در جهت طول کویل)
+            // حالت 2: برش عرضی
             const sheets2_length = Math.floor(coilLengthMm / sheetWidthMm);
             const sheets2_width = Math.floor(coilWidth / sheetLengthMm);
             const totalSheets2 = sheets2_length * sheets2_width;
@@ -402,6 +542,12 @@
                 cuttingPattern = `تعداد ورق در طول: ${sheets2_length} - تعداد ورق در عرض: ${sheets2_width}`;
             }
 
+            // بررسی امکان تولید ورق
+            if (bestOption.sheets === 0) {
+                showAlert('امکان تولید ورق با این ابعاد وجود ندارد. لطفاً ابعاد را کوچک‌تر کنید', 'danger');
+                return;
+            }
+
             // نمایش نتایج
             document.getElementById('coilLength').textContent = coilLengthM.toFixed(2) + ' متر';
             document.getElementById('sheetsCount').textContent = bestOption.sheets + ' ورق';
@@ -427,6 +573,9 @@
             
             // نمایش بخش نتایج
             document.getElementById('resultsSection').style.display = 'block';
+            
+            // پیام موفقیت
+            showAlert('محاسبات با موفقیت انجام شد!', 'success');
         }
 
         function createCuttingDiagram(lengthSheets, widthSheets) {
@@ -436,7 +585,6 @@
             const visualization = document.createElement('div');
             visualization.className = 'coil-visualization';
 
-            // محدود کردن نمایش به حداکثر 10x10 برای قابلیت مشاهده
             const maxDisplay = 10;
             const displayLengthSheets = Math.min(lengthSheets, maxDisplay);
             const displayWidthSheets = Math.min(widthSheets, maxDisplay);
@@ -455,7 +603,6 @@
                 visualization.appendChild(row);
             }
 
-            // اضافه کردن توضیحات
             const description = document.createElement('div');
             description.style.marginTop = '10px';
             description.style.textAlign = 'center';
