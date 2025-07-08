@@ -373,6 +373,18 @@
                     <h3>مساحت مفید</h3>
                     <div class="result-value" id="usefulArea">-</div>
                 </div>
+                <div class="result-card">
+                    <h3>طول باقی‌مانده کویل</h3>
+                    <div class="result-value" id="remainingCoilLength">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>عرض باقی‌مانده کویل</h3>
+                    <div class="result-value" id="remainingCoilWidth">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>وزن باقی‌مانده کویل</h3>
+                    <div class="result-value" id="remainingCoilWeight">-</div>
+                </div>
             </div>
             
             <div class="cutting-diagram">
@@ -384,8 +396,7 @@
                     <p id="optimizationTips">-</p>
                 </div>
                 <div class="diagram-container" id="diagramContainer">
-                    <!-- نمودار برش اینجا نمایش داده می‌شود -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -448,11 +459,11 @@
             
             // دریافت مقادیر ورودی
             const coilWeight = parseFloat(document.getElementById('coilWeight').value);
-            const coilWidth = parseFloat(document.getElementById('coilWidth').value);
-            const coilThickness = parseFloat(document.getElementById('coilThickness').value);
-            const density = parseFloat(document.getElementById('density').value);
-            const sheetLength = parseFloat(document.getElementById('sheetLength').value);
-            const sheetWidth = parseFloat(document.getElementById('sheetWidth').value);
+            const coilWidth = parseFloat(document.getElementById('coilWidth').value); // mm
+            const coilThickness = parseFloat(document.getElementById('coilThickness').value); // mm
+            const density = parseFloat(document.getElementById('density').value); // g/cm^3
+            const sheetLength = parseFloat(document.getElementById('sheetLength').value); // m
+            const sheetWidth = parseFloat(document.getElementById('sheetWidth').value); // m
 
             // اعتبارسنجی کامل
             const inputs = [
@@ -480,46 +491,46 @@
                 return;
             }
 
+            // تبدیل ابعاد ورق مورد نیاز به میلی‌متر برای مقایسه با عرض کویل
+            const sheetLengthMm = sheetLength * 1000;
+            const sheetWidthMm = sheetWidth * 1000;
+
             // بررسی منطقی بودن ابعاد
-            if (sheetLength * 1000 > coilWidth || sheetWidth * 1000 > coilWidth) {
-                showAlert('ابعاد ورق نسبت به عرض کویل بزرگ است', 'danger');
+            if (sheetLengthMm > coilWidth && sheetWidthMm > coilWidth) {
+                showAlert('ابعاد ورق (هم طول و هم عرض) نسبت به عرض کویل بزرگ است. امکان برش وجود ندارد.', 'danger');
                 return;
             }
 
             // محاسبه طول کویل
-            const coilWidthCm = coilWidth / 10;
-            const coilThicknessCm = coilThickness / 10;
-            const coilWeightGram = coilWeight * 1000;
+            const coilWidthCm = coilWidth / 10; // cm
+            const coilThicknessCm = coilThickness / 10; // cm
+            const coilWeightGram = coilWeight * 1000; // gram
             
             const coilLengthCm = coilWeightGram / (coilWidthCm * coilThicknessCm * density);
-            const coilLengthM = coilLengthCm / 100;
-
-            // تبدیل ابعاد به میلی‌متر برای محاسبه
-            const sheetLengthMm = sheetLength * 1000;
-            const sheetWidthMm = sheetWidth * 1000;
-            const coilLengthMm = coilLengthM * 1000;
+            const coilLengthM = coilLengthCm / 100; // meters
+            const coilLengthMm = coilLengthM * 1000; // mm
 
             // محاسبه بهینه‌سازی برش
-            // حالت 1: برش طولی
+            // حالت 1: برش طولی (طول ورق در جهت طول کویل، عرض ورق در جهت عرض کویل)
             const sheets1_length = Math.floor(coilLengthMm / sheetLengthMm);
             const sheets1_width = Math.floor(coilWidth / sheetWidthMm);
             const totalSheets1 = sheets1_length * sheets1_width;
             
             const usedArea1 = totalSheets1 * sheetLengthMm * sheetWidthMm;
-            const totalArea1 = coilLengthMm * coilWidth;
-            const waste1 = ((totalArea1 - usedArea1) / totalArea1) * 100;
+            const totalAreaCoilMm2 = coilLengthMm * coilWidth;
+            const waste1 = ((totalAreaCoilMm2 - usedArea1) / totalAreaCoilMm2) * 100;
 
-            // حالت 2: برش عرضی
+            // حالت 2: برش عرضی (عرض ورق در جهت طول کویل، طول ورق در جهت عرض کویل)
             const sheets2_length = Math.floor(coilLengthMm / sheetWidthMm);
             const sheets2_width = Math.floor(coilWidth / sheetLengthMm);
             const totalSheets2 = sheets2_length * sheets2_width;
             
             const usedArea2 = totalSheets2 * sheetLengthMm * sheetWidthMm;
-            const totalArea2 = coilLengthMm * coilWidth;
-            const waste2 = ((totalArea2 - usedArea2) / totalArea2) * 100;
+            const waste2 = ((totalAreaCoilMm2 - usedArea2) / totalAreaCoilMm2) * 100;
 
-            // انتخاب بهترین حالت
             let bestOption, cuttingDirection, cuttingPattern;
+            let remainingCoilLengthMm, remainingCoilWidthMm;
+
             if (totalSheets1 >= totalSheets2) {
                 bestOption = {
                     sheets: totalSheets1,
@@ -530,6 +541,11 @@
                 };
                 cuttingDirection = 'برش طولی (طول ورق در جهت طول کویل)';
                 cuttingPattern = `تعداد ورق در طول: ${sheets1_length} - تعداد ورق در عرض: ${sheets1_width}`;
+                
+                // Remaining dimensions for longitudinal cut
+                remainingCoilLengthMm = coilLengthMm - (sheets1_length * sheetLengthMm);
+                remainingCoilWidthMm = coilWidth - (sheets1_width * sheetWidthMm);
+
             } else {
                 bestOption = {
                     sheets: totalSheets2,
@@ -540,20 +556,33 @@
                 };
                 cuttingDirection = 'برش عرضی (عرض ورق در جهت طول کویل)';
                 cuttingPattern = `تعداد ورق در طول: ${sheets2_length} - تعداد ورق در عرض: ${sheets2_width}`;
+
+                // Remaining dimensions for transverse cut
+                remainingCoilLengthMm = coilLengthMm - (sheets2_length * sheetWidthMm);
+                remainingCoilWidthMm = coilWidth - (sheets2_width * sheetLengthMm);
             }
 
             // بررسی امکان تولید ورق
             if (bestOption.sheets === 0) {
-                showAlert('امکان تولید ورق با این ابعاد وجود ندارد. لطفاً ابعاد را کوچک‌تر کنید', 'danger');
+                showAlert('امکان تولید ورق با این ابعاد وجود ندارد. لطفاً ابعاد را کوچک‌تر یا کویل بزرگتر انتخاب کنید.', 'danger');
+                document.getElementById('resultsSection').style.display = 'none';
                 return;
             }
 
-            // نمایش نتایج
+            // Calculate remaining coil area and weight
+            const remainingAreaCoilMm2 = totalAreaCoilMm2 - bestOption.usedArea;
+            const remainingCoilWeight = (remainingAreaCoilMm2 / totalAreaCoilMm2) * coilWeight;
+
+            // Display results
             document.getElementById('coilLength').textContent = coilLengthM.toFixed(2) + ' متر';
             document.getElementById('sheetsCount').textContent = bestOption.sheets + ' ورق';
             document.getElementById('wastePercentage').textContent = bestOption.waste.toFixed(2) + '%';
             document.getElementById('usefulArea').textContent = (bestOption.usedArea / 1000000).toFixed(2) + ' متر مربع';
             
+            document.getElementById('remainingCoilLength').textContent = (remainingCoilLengthMm / 1000).toFixed(2) + ' متر';
+            document.getElementById('remainingCoilWidth').textContent = (remainingCoilWidthMm / 1000).toFixed(2) + ' متر';
+            document.getElementById('remainingCoilWeight').textContent = remainingCoilWeight.toFixed(2) + ' کیلوگرم';
+
             document.getElementById('cuttingDirection').textContent = `جهت برش: ${cuttingDirection}`;
             document.getElementById('cuttingPattern').textContent = `الگوی برش: ${cuttingPattern}`;
             
