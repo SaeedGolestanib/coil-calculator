@@ -563,7 +563,7 @@
                 const remainingLengthAtEnd = coilLengthMm - (sheets2_length * sheetWidthMm); // باقی‌مانده طول از انتهای کویل (اینجا عرض ورق در جهت طول)
                 const remainingWidthAtSide = coilWidth - (sheets2_width * sheetLengthMm); // باقی‌مانده عرض از کناره کویل (اینجا طول ورق در جهت عرض)
 
-                wasteDescription += `<br><br>ضایعات شامل نوارهایی به عرض ${remainingWidthAtSide.toFixed(2)} میلی‌متر در طول ${coilLengthMm.toFixed(2)} میلی‌متر (کناره‌های کویل) و تکه‌ای به طول ${remainingLengthAtEnd.toFixed(2)} میلی‌متر در عرض ${coilWidth.toFixed(2)} میلی‌متر (انتهای کویل) می‌باشد.`;
+                wasteDescription += `<br>ضایعات شامل نوارهایی به عرض ${remainingWidthAtSide.toFixed(2)} میلی‌متر در طول ${coilLengthMm.toFixed(2)} میلی‌متر (کناره‌های کویل) و تکه‌ای به طول ${remainingLengthAtEnd.toFixed(2)} میلی‌متر در عرض ${coilWidth.toFixed(2)} میلی‌متر (انتهای کویل) می‌باشد.`;
             }
 
             // بررسی امکان تولید ورق
