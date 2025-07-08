@@ -325,7 +325,7 @@
                 </div>
                 <div class="input-item">
                     <label for="coilThickness">ضخامت کویل (میلی‌متر):</label>
-                    <input type="number" id="coilThickness" step="0.01" placeholder="مثال: 0.5" min="0.01">
+                    <input type="number" id="coilThickness" step="0.01" placeholder="مثal: 0.5" min="0.01">
                     <div class="error-message" id="coilThicknessError">لطفاً ضخامت کویل را به صورت عدد مثبت وارد کنید</div>
                 </div>
                 <div class="input-item">
@@ -374,16 +374,8 @@
                     <div class="result-value" id="usefulArea">-</div>
                 </div>
                 <div class="result-card">
-                    <h3>طول باقی‌مانده کویل</h3>
-                    <div class="result-value" id="remainingCoilLength">-</div>
-                </div>
-                <div class="result-card">
-                    <h3>عرض باقی‌مانده کویل</h3>
-                    <div class="result-value" id="remainingCoilWidth">-</div>
-                </div>
-                <div class="result-card">
-                    <h3>وزن باقی‌مانده کویل</h3>
-                    <div class="result-value" id="remainingCoilWeight">-</div>
+                    <h3>وزن ضایعات</h3>
+                    <div class="result-value" id="wasteWeight">-</div>
                 </div>
             </div>
             
@@ -500,6 +492,13 @@
                 showAlert('ابعاد ورق (هم طول و هم عرض) نسبت به عرض کویل بزرگ است. امکان برش وجود ندارد.', 'danger');
                 return;
             }
+            if (sheetLengthMm > coilWidth && sheetWidthMm <= coilWidth) {
+                showAlert('طول ورق از عرض کویل بزرگتر است. برای برش بهینه، شاید نیاز باشد ورق را به صورت عرضی در کویل قرار دهید.', 'warning');
+            }
+            if (sheetWidthMm > coilWidth && sheetLengthMm <= coilWidth) {
+                showAlert('عرض ورق از عرض کویل بزرگتر است. برای برش بهینه، شاید نیاز باشد ورق را به صورت طولی در کویل قرار دهید.', 'warning');
+            }
+
 
             // محاسبه طول کویل
             const coilWidthCm = coilWidth / 10; // cm
@@ -529,7 +528,7 @@
             const waste2 = ((totalAreaCoilMm2 - usedArea2) / totalAreaCoilMm2) * 100;
 
             let bestOption, cuttingDirection, cuttingPattern;
-            let remainingCoilLengthMm, remainingCoilWidthMm;
+            let wasteDescription = ''; // برای توضیح دقیق‌تر ضایعات
 
             if (totalSheets1 >= totalSheets2) {
                 bestOption = {
@@ -537,14 +536,17 @@
                     waste: waste1,
                     usedArea: usedArea1,
                     lengthSheets: sheets1_length,
-                    widthSheets: sheets1_width
+                    widthSheets: sheets1_width,
+                    optimalCutType: 'longitudinal'
                 };
                 cuttingDirection = 'برش طولی (طول ورق در جهت طول کویل)';
                 cuttingPattern = `تعداد ورق در طول: ${sheets1_length} - تعداد ورق در عرض: ${sheets1_width}`;
                 
-                // Remaining dimensions for longitudinal cut
-                remainingCoilLengthMm = coilLengthMm - (sheets1_length * sheetLengthMm);
-                remainingCoilWidthMm = coilWidth - (sheets1_width * sheetWidthMm);
+                const remainingLength = coilLengthMm - (sheets1_length * sheetLengthMm); // باقی‌مانده طول از انتهای کویل
+                const remainingWidth = coilWidth - (sheets1_width * sheetWidthMm); // باقی‌مانده عرض از کناره کویل
+                
+                wasteDescription += `ضایعات شامل نوارهایی به عرض ${remainingWidth.toFixed(2)} میلی‌متر در طول کویل و تکه‌ای به طول ${remainingLength.toFixed(2)} میلی‌متر در عرض کامل کویل می‌باشد.`;
+
 
             } else {
                 bestOption = {
@@ -552,14 +554,16 @@
                     waste: waste2,
                     usedArea: usedArea2,
                     lengthSheets: sheets2_length,
-                    widthSheets: sheets2_width
+                    widthSheets: sheets2_width,
+                    optimalCutType: 'transverse'
                 };
                 cuttingDirection = 'برش عرضی (عرض ورق در جهت طول کویل)';
                 cuttingPattern = `تعداد ورق در طول: ${sheets2_length} - تعداد ورق در عرض: ${sheets2_width}`;
+                
+                const remainingLength = coilLengthMm - (sheets2_length * sheetWidthMm); // باقی‌مانده طول از انتهای کویل (اینجا عرض ورق)
+                const remainingWidth = coilWidth - (sheets2_width * sheetLengthMm); // باقی‌مانده عرض از کناره کویل (اینجا طول ورق)
 
-                // Remaining dimensions for transverse cut
-                remainingCoilLengthMm = coilLengthMm - (sheets2_length * sheetWidthMm);
-                remainingCoilWidthMm = coilWidth - (sheets2_width * sheetLengthMm);
+                wasteDescription += `ضایعات شامل نوارهایی به عرض ${remainingWidth.toFixed(2)} میلی‌متر در طول کویل و تکه‌ای به طول ${remainingLength.toFixed(2)} میلی‌متر در عرض کامل کویل می‌باشد.`;
             }
 
             // بررسی امکان تولید ورق
@@ -571,7 +575,7 @@
 
             // Calculate remaining coil area and weight
             const remainingAreaCoilMm2 = totalAreaCoilMm2 - bestOption.usedArea;
-            const remainingCoilWeight = (remainingAreaCoilMm2 / totalAreaCoilMm2) * coilWeight;
+            const wasteWeight = (remainingAreaCoilMm2 / totalAreaCoilMm2) * coilWeight;
 
             // Display results
             document.getElementById('coilLength').textContent = coilLengthM.toFixed(2) + ' متر';
@@ -579,20 +583,18 @@
             document.getElementById('wastePercentage').textContent = bestOption.waste.toFixed(2) + '%';
             document.getElementById('usefulArea').textContent = (bestOption.usedArea / 1000000).toFixed(2) + ' متر مربع';
             
-            document.getElementById('remainingCoilLength').textContent = (remainingCoilLengthMm / 1000).toFixed(2) + ' متر';
-            document.getElementById('remainingCoilWidth').textContent = (remainingCoilWidthMm / 1000).toFixed(2) + ' متر';
-            document.getElementById('remainingCoilWeight').textContent = remainingCoilWeight.toFixed(2) + ' کیلوگرم';
+            document.getElementById('wasteWeight').textContent = wasteWeight.toFixed(2) + ' کیلوگرم';
 
             document.getElementById('cuttingDirection').textContent = `جهت برش: ${cuttingDirection}`;
             document.getElementById('cuttingPattern').textContent = `الگوی برش: ${cuttingPattern}`;
             
             let optimizationTips = '';
             if (bestOption.waste > 20) {
-                optimizationTips = 'توصیه: ضایعات بالا است. بررسی ابعاد ورق یا تغییر ابعاد کویل توصیه می‌شود.';
+                optimizationTips = `ضایعات بالا است (${bestOption.waste.toFixed(2)}%). بررسی ابعاد ورق یا تغییر ابعاد کویل توصیه می‌شود. ${wasteDescription}`;
             } else if (bestOption.waste > 10) {
-                optimizationTips = 'توصیه: ضایعات متوسط است. می‌توان بهینه‌سازی بیشتری انجام داد.';
+                optimizationTips = `ضایعات متوسط است (${bestOption.waste.toFixed(2)}%). می‌توان بهینه‌سازی بیشتری انجام داد. ${wasteDescription}`;
             } else {
-                optimizationTips = 'عالی! ضایعات کم است و برش بهینه انجام می‌شود.';
+                optimizationTips = `عالی! ضایعات کم است (${bestOption.waste.toFixed(2)}%) و برش بهینه انجام می‌شود. ${wasteDescription}`;
             }
             
             document.getElementById('optimizationTips').textContent = optimizationTips;
