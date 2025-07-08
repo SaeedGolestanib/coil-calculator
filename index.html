@@ -319,6 +319,335 @@
                     <div class="error-message" id="coilWeightError">لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
                 </div>
                 <div class="input-item">
+                    <labelI apologize for the oversight. Since you requested a complete rewrite of the code with the addition of calculating and displaying the remaining coil dimensions (length and width in meters) after cutting the desired sheets, I’ll provide the full updated code. The changes include:
+1. Adding calculations for the remaining coil dimensions in the `calculateOptimization` function.
+2. Adding a new result card in the HTML to display the remaining dimensions.
+3. Ensuring all existing functionality (input validation, coil length calculation, sheet count, waste percentage, useful area, and cutting diagram) is preserved.
+
+Below is the complete rewritten code with the requested feature integrated.
+
+<xaiArtifact artifact_id="1de5e75f-2392-4835-bde3-72e6fa1358ca" artifact_version_id="cea3c7d1-97dd-4cc4-b500-0ac749f7b3f2" title="index.html" contentType="text/html">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="سعید گلستانی">
+    <title>محاسبه‌گر بهینه‌سازی برش کویل ورق</title>
+    <style>
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('font/vazirmatn-extrabold.woff2') format('woff2');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('font/vazirmatn-bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .author-section {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .author-section p {
+            color: #495057;
+            font-size: 1.1em;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .input-section, .results-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .input-section h2, .results-section h2 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .input-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: #495057;
+        }
+        
+        input {
+            padding: 10px;
+            border: 2px solid #ced4da;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        input.error {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .calculate-btn {
+            font-family: 'Vazirmatn', sans-serif;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .result-card h3 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+        
+        .result-value {
+            font-size: 1.5em;
+            font-weight: 800;
+            color: #667eea;
+        }
+        
+        .cutting-diagram {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        
+        .coil-visualization {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .coil-row {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .sheet-piece {
+            width: 30px;
+            height: 20px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: 1px solid #1e7e34;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: white;
+            font-weight: 700;
+        }
+        
+        .waste-area {
+            background: linear-gradient(45deg, #dc3545, #fd7e14);
+            opacity: 0.7;
+        }
+        
+        .optimize-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .optimize-info h4 {
+            color: #0c5460;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .optimize-info p {
+            color: #0c5460;
+            margin: 5px 0;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .instructions ul {
+            color: #856404;
+            margin: 10px 0;
+            padding-right: 20px;
+        }
+        
+        .instructions li {
+            margin: 5px 0;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>محاسبه‌گر بهینه‌سازی برش کویل ورق</h1>
+        <div class="author-section">
+            <p>نویسنده: سعید گلستانی</p>
+        </div>
+        
+        <div class="alert alert-danger" id="errorAlert">
+            <strong>خطا!</strong> <span id="errorMessage"></span>
+        </div>
+        
+        <div class="instructions">
+            <h3>راهنمای استفاده:</h3>
+            <ul>
+                <li>وزن کویل را به کیلوگرم وارد کنید (فقط اعداد مثبت)</li>
+                <li>عرض کویل را به میلی‌متر وارد کنید (فقط اعداد مثبت)</li>
+                <li>ضخامت کویل را به میلی‌متر وارد کنید (فقط اعداد مثبت)</li>
+                <li>دانسیته را تنظیم کنید (پیش‌فرض: 7.85 گرم/سانتی‌متر مکعب)</li>
+                <li>ابعاد ورق مورد نیاز را به متر وارد کنید (فقط اعداد مثبت)</li>
+                <li>دکمه محاسبه را فشار دهید</li>
+            </ul>
+        </div>
+        
+        <div class="input-section">
+            <h2>مشخصات کویل اصلی</h2>
+            <div class="input-group">
+                <div class="input-item">
+                    <label for="coilWeight">وزن کویل (کیلوگرم):</label>
+                    <input type="number" id="coilWeight" step="0.1" placeholder="مثال: 1000" min="0.1">
+                    <div class="error-message" id="coilWeightError">لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
+                </div>
+                <div class="input-item">
                     <label for="coilWidth">عرض کویل (میلی‌متر):</label>
                     <input type="number" id="coilWidth" step="0.1" placeholder="مثال: 1250" min="0.1">
                     <div class="error-message" id="coilWidthError">لطفاً عرض کویل را به صورت عدد مثبت وارد کنید</div>
@@ -372,6 +701,10 @@
                 <div class="result-card">
                     <h3>مساحت مفید</h3>
                     <div class="result-value" id="usefulArea">-</div>
+                </div>
+                <div class="result-card">
+                    <h3>ابعاد کویل باقی‌مانده (طول × عرض)</h3>
+                    <div class="result-value" id="remainingDimensions">-</div>
                 </div>
             </div>
             
@@ -519,7 +852,7 @@
             const waste2 = ((totalArea2 - usedArea2) / totalArea2) * 100;
 
             // انتخاب بهترین حالت
-            let bestOption, cuttingDirection, cuttingPattern;
+            let bestOption, cuttingDirection, cuttingPattern, remainingLengthMm, remainingWidthMm;
             if (totalSheets1 >= totalSheets2) {
                 bestOption = {
                     sheets: totalSheets1,
@@ -530,6 +863,9 @@
                 };
                 cuttingDirection = 'برش طولی (طول ورق در جهت طول کویل)';
                 cuttingPattern = `تعداد ورق در طول: ${sheets1_length} - تعداد ورق در عرض: ${sheets1_width}`;
+                // محاسبه ابعاد باقی‌مانده برای برش طولی
+                remainingLengthMm = coilLengthMm - (sheets1_length * sheetLengthMm);
+                remainingWidthMm = coilWidth - (sheets1_width * sheetWidthMm);
             } else {
                 bestOption = {
                     sheets: totalSheets2,
@@ -540,6 +876,9 @@
                 };
                 cuttingDirection = 'برش عرضی (عرض ورق در جهت طول کویل)';
                 cuttingPattern = `تعداد ورق در طول: ${sheets2_length} - تعداد ورق در عرض: ${sheets2_width}`;
+                // محاسبه ابعاد باقی‌مانده برای برش عرضی
+                remainingLengthMm = coilLengthMm - (sheets2_length * sheetWidthMm);
+                remainingWidthMm = coilWidth - (sheets2_width * sheetLengthMm);
             }
 
             // بررسی امکان تولید ورق
@@ -548,11 +887,16 @@
                 return;
             }
 
+            // تبدیل ابعاد باقی‌مانده به متر
+            const remainingLengthM = remainingLengthMm / 1000;
+            const remainingWidthM = remainingWidthMm / 1000;
+
             // نمایش نتایج
             document.getElementById('coilLength').textContent = coilLengthM.toFixed(2) + ' متر';
             document.getElementById('sheetsCount').textContent = bestOption.sheets + ' ورق';
             document.getElementById('wastePercentage').textContent = bestOption.waste.toFixed(2) + '%';
             document.getElementById('usefulArea').textContent = (bestOption.usedArea / 1000000).toFixed(2) + ' متر مربع';
+            document.getElementById('remainingDimensions').textContent = `${remainingLengthM.toFixed(2)} × ${remainingWidthM.toFixed(2)} متر`;
             
             document.getElementById('cuttingDirection').textContent = `جهت برش: ${cuttingDirection}`;
             document.getElementById('cuttingPattern').textContent = `الگوی برش: ${cuttingPattern}`;
