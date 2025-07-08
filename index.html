@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang=fa dir=rtl>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset=UTF-8>
+    <meta name=viewport content=width=device-width, initial-scale=1.0>
     <title>محاسبه‌گر بهینه‌سازی برش کویل ورق</title>
     <style>
         @font-face {
@@ -112,7 +112,7 @@
             color: #495057;
         }
 
-        input {
+        input, select {
             padding: 10px;
             border: 2px solid #ced4da;
             border-radius: 5px;
@@ -121,7 +121,7 @@
             transition: border-color 0.3s;
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -300,19 +300,19 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <img src="images/Saeed4.png" alt="Logo" class="logo">
+<div class=container>
+    <img src=images/Saeed4.png alt=Logo class=logo>
     <h1>محاسبه‌گر بهینه‌سازی برش کویل ورق</h1>
 
-    <div class="author-section">
+    <div class=author-section>
         <p>نویسنده: سعید گلستانی</p>
     </div>
 
-    <div class="alert alert-danger" id="errorAlert">
-        <strong>خطا!</strong> <span id="errorMessage"></span>
+    <div class=alert alert-danger id=errorAlert>
+        <strong>خطا!</strong> <span id=errorMessage></span>
     </div>
 
-    <div class="instructions">
+    <div class=instructions>
         <h3>راهنمای استفاده:</h3>
         <ul>
             <li>وزن کویل را به کیلوگرم وارد کنید (فقط اعداد مثبت)</li>
@@ -324,89 +324,88 @@
         </ul>
     </div>
 
-    <div class="input-section">
+    <div class=input-section>
         <h2>مشخصات کویل اصلی</h2>
-        <div class="input-group">
-            <div class="input-item">
-                <label for="materialType">نوع ورق:</label>
-                <select id="materialType" onchange="updateDensity()">
-                    <option value="7.85" selected>ورق آهن (7.85 g/cm³)</option>
-                    <option value="7.84">ورق گالوانیزه (7.84 g/cm³)</option>
-                    <option value="7.83">ورق استیل (7.83 g/cm³)</option>
+        <div class=input-group>
+            <div class=input-item>
+                <label for=coilWeight>وزن کویل (کیلوگرم):</label>
+                <input type=number id=coilWeight step=0.1 placeholder=مثال: 1000 min=0.1>
+                <div class=error-message id=coilWeightError>لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
+            </div>
+            <div class=input-item>
+                <label for=coilWidth>عرض کویل (میلی‌متر):</label>
+                <input type=number id=coilWidth step=0.1 placeholder=مثال: 1250 min=0.1>
+                <div class=error-message id=coilWidthError>لطفاً عرض کویل را به صورت عدد مثبت وارد کنید</div>
+            </div>
+            <div class=input-item>
+                <label for=coilThickness>ضخامت کویل (میلی‌متر):</label>
+                <input type=number id=coilThickness step=0.01 placeholder=مثال: 0.5 min=0.01>
+                <div class=error-message id=coilThicknessError>لطفاً ضخامت کویل را به صورت عدد مثبت وارد کنید</div>
+            </div>
+            <div class=input-item>
+                <label for=density>دانسیته:</label>
+                <select id=density>
+                    <option value=7.85 selected>آهن (7.85 گرم/سانتی‌متر مکعب)</option>
+                    <option value=7.84>گالوانیزه (7.84 گرم/سانتی‌متر مکعب)</option>
+                    <option value=7.83>استیل (7.83 گرم/سانتی‌متر مکعب)</option>
                 </select>
-                <input type="number" id="density" readonly value="7.85" step="0.01" min="0.01" style="margin-top: 10px;">
-                <div class="error-message" id="densityError">لطفاً دانسیته را به صورت عدد مثبت وارد کنید</div>
-            </div>
-            <div class="input-item">
-                <label for="coilWidth">عرض کویل (میلی‌متر):</label>
-                <input type="number" id="coilWidth" step="0.1" placeholder="مثال: 1250" min="0.1">
-                <div class="error-message" id="coilWidthError">لطفاً عرض کویل را به صورت عدد مثبت وارد کنید</div>
-            </div>
-            <div class="input-item">
-                <label for="coilThickness">ضخامت کویل (میلی‌متر):</label>
-                <input type="number" id="coilThickness" step="0.01" placeholder="مثال: 0.5" min="0.01">
-                <div class="error-message" id="coilThicknessError">لطفاً ضخامت کویل را به صورت عدد مثبت وارد کنید</div>
-            </div>
-            <div class="input-item">
-                <label for="density">دانسیته (گرم/سانتی‌متر مکعب):</label>
-                <input type="number" id="density" value="7.85" step="0.01" min="0.01">
-                <div class="error-message" id="densityError">لطفاً دانسیته را به صورت عدد مثبت وارد کنید</div>
+                <div class=error-message id=densityError style="display: none;"></div>
             </div>
         </div>
     </div>
 
-    <div class="input-section">
+    <div class=input-section>
         <h2>ابعاد ورق مورد نیاز</h2>
-        <div class="input-group">
-            <div class="input-item">
-                <label for="sheetLength">طول ورق (متر):</label>
-                <input type="number" id="sheetLength" step="0.01" placeholder="مثال: 2.5" min="0.01">
-                <div class="error-message" id="sheetLengthError">لطفاً طول ورق را به صورت عدد مثبت وارد کنید</div>
+        <div class=input-group>
+            <div class=input-item>
+                <label for=sheetLength>طول ورق (متر):</label>
+                <input type=number id=sheetLength step=0.01 placeholder=مثال: 2.5 min=0.01>
+                <div class=error-message id=sheetLengthError>لطفاً طول ورق را به صورت عدد مثبت وارد کنید</div>
             </div>
-            <div class="input-item">
-                <label for="sheetWidth">عرض ورق (متر):</label>
-                <input type="number" id="sheetWidth" step="0.01" placeholder="مثال: 1.2" min="0.01">
-                <div class="error-message" id="sheetWidthError">لطفاً عرض ورق را به صورت عدد مثبت وارد کنید</div>
+            <div class=input-item>
+                <label for=sheetWidth>عرض ورق (متر):</label>
+                <input type=number id=sheetWidth step=0.01 placeholder=مثال: 1.2 min=0.01>
+                <div class=error-message id=sheetWidthError>لطفاً عرض ورق را به صورت عدد مثبت وارد کنید</div>
             </div>
         </div>
     </div>
 
-    <button class="calculate-btn" onclick="calculateOptimization()">محاسبه بهینه‌سازی</button>
+    <button class=calculate-btn onclick=calculateOptimization()>محاسبه بهینه‌سازی</button>
 
-    <div class="results-section" id="resultsSection" style="display: none;">
+    <div class=results-section id=resultsSection style=display: none;>
         <h2>نتایج محاسبات</h2>
-        <div class="results-grid">
-            <div class="result-card">
+        <div class=results-grid>
+            <div class=result-card>
                 <h3>طول کویل محاسبه شده</h3>
-                <div class="result-value" id="coilLength">-</div>
+                <div class=result-value id=coilLength>-</div>
             </div>
-            <div class="result-card">
+            <div class=result-card>
                 <h3>تعداد ورق قابل تولید</h3>
-                <div class="result-value" id="sheetsCount">-</div>
+                <div class=result-value id=sheetsCount>-</div>
             </div>
-            <div class="result-card">
+            <div class=result-card>
                 <h3>درصد ضایعات</h3>
-                <div class="result-value" id="wastePercentage">-</div>
+                <div class=result-value id=wastePercentage>-</div>
             </div>
-            <div class="result-card">
+            <div class=result-card>
                 <h3>مساحت مفید</h3>
-                <div class="result-value" id="usefulArea">-</div>
+                <div class=result-value id=usefulArea>-</div>
             </div>
-            <div class="result-card">
+            <div class=result-card>
                 <h3>وزن ضایعات</h3>
-                <div class="result-value" id="wasteWeight">-</div>
+                <div class=result-value id=wasteWeight>-</div>
             </div>
         </div>
 
-        <div class="cutting-diagram">
+        <div class=cutting-diagram>
             <h3>نحوه برش بهینه</h3>
-            <div class="optimize-info">
+            <div class=optimize-info>
                 <h4>توصیه‌های برش:</h4>
-                <p id="cuttingDirection">-</p>
-                <p id="cuttingPattern">-</p>
-                <p id="optimizationTips">-</p>
+                <p id=cuttingDirection>-</p>
+                <p id=cuttingPattern>-</p>
+                <p id=optimizationTips>-</p>
             </div>
-            <div class="diagram-container" id="diagramContainer">
+            <div class=diagram-container id=diagramContainer>
             </div>
         </div>
     </div>
@@ -415,7 +414,7 @@
 <script>
     // اضافه کردن event listener برای اعتبارسنجی ورودی‌ها
     document.addEventListener('DOMContentLoaded', function() {
-        const inputs = ['coilWeight', 'coilWidth', 'coilThickness', 'density', 'sheetLength', 'sheetWidth'];
+        const inputs = ['coilWeight', 'coilWidth', 'coilThickness', 'sheetLength', 'sheetWidth'];
 
         inputs.forEach(inputId => {
             const input = document.getElementById(inputId);
@@ -426,7 +425,6 @@
                 validateInput(inputId);
             });
         });
-        updateDensity();
     });
 
     function validateInput(inputId) {
@@ -464,13 +462,7 @@
         const alert = document.getElementById('errorAlert');
         alert.style.display = 'none';
     }
-    function updateDensity() {
-        const materialSelect = document.getElementById('materialType');
-        const densityInput = document.getElementById('density');
-        const selectedDensity = parseFloat(materialSelect.value);
-        densityInput.value = selectedDensity;
-        validateInput('density'); // بررسی اعتبار ورودی
-    }
+
     function calculateOptimization() {
         // پنهان کردن پیام خطای قبلی
         hideAlert();
@@ -488,7 +480,6 @@
             {id: 'coilWeight', value: coilWeight, name: 'وزن کویل'},
             {id: 'coilWidth', value: coilWidth, name: 'عرض کویل'},
             {id: 'coilThickness', value: coilThickness, name: 'ضخامت کویل'},
-            {id: 'density', value: density, name: 'دانسیته'},
             {id: 'sheetLength', value: sheetLength, name: 'طول ورق'},
             {id: 'sheetWidth', value: sheetWidth, name: 'عرض ورق'}
         ];
@@ -524,7 +515,6 @@
         } else if (sheetWidthMm > coilWidth && sheetLengthMm <= coilWidth) {
             showAlert('عرض ورق از عرض کویل بزرگتر است. برای برش بهینه، شاید نیاز باشد ورق را به صورت طولی در کویل قرار دهید.', 'warning');
         }
-
 
         // محاسبه طول کویل
         const coilWidthCm = coilWidth / 10; // cm
@@ -572,7 +562,6 @@
             const remainingWidthAtSide = coilWidth - (sheets1_width * sheetWidthMm); // باقی‌مانده عرض از کناره کویل
 
             wasteDescription += `<br><br>ضایعات شامل نوارهایی به عرض ${remainingWidthAtSide.toFixed(2)} میلی‌متر در طول ${coilLengthMm.toFixed(2)} میلی‌متر (کناره‌های کویل) و تکه‌ای به طول ${remainingLengthAtEnd.toFixed(2)} میلی‌متر در عرض ${coilWidth.toFixed(2)} میلی‌متر (انتهای کویل) می‌باشد.`;
-
 
         } else {
             bestOption = {
