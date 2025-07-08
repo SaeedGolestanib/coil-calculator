@@ -328,9 +328,14 @@
         <h2>مشخصات کویل اصلی</h2>
         <div class="input-group">
             <div class="input-item">
-                <label for="coilWeight">وزن کویل (کیلوگرم):</label>
-                <input type="number" id="coilWeight" step="0.1" placeholder="مثال: 1000" min="0.1">
-                <div class="error-message" id="coilWeightError">لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
+                <label for="materialType">نوع ورق:</label>
+                <select id="materialType" onchange="updateDensity()">
+                    <option value="7.85" selected>ورق آهن (7.85 g/cm³)</option>
+                    <option value="7.84">ورق گالوانیزه (7.84 g/cm³)</option>
+                    <option value="7.83">ورق استیل (7.83 g/cm³)</option>
+                </select>
+                <input type="number" id="density" readonly value="7.85" step="0.01" min="0.01" style="margin-top: 10px;">
+                <div class="error-message" id="densityError">لطفاً دانسیته را به صورت عدد مثبت وارد کنید</div>
             </div>
             <div class="input-item">
                 <label for="coilWidth">عرض کویل (میلی‌متر):</label>
@@ -421,6 +426,7 @@
                 validateInput(inputId);
             });
         });
+        updateDensity();
     });
 
     function validateInput(inputId) {
@@ -458,7 +464,13 @@
         const alert = document.getElementById('errorAlert');
         alert.style.display = 'none';
     }
-
+    function updateDensity() {
+        const materialSelect = document.getElementById('materialType');
+        const densityInput = document.getElementById('density');
+        const selectedDensity = parseFloat(materialSelect.value);
+        densityInput.value = selectedDensity;
+        validateInput('density'); // بررسی اعتبار ورودی
+    }
     function calculateOptimization() {
         // پنهان کردن پیام خطای قبلی
         hideAlert();
