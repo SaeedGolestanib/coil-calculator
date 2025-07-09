@@ -633,5 +633,47 @@
         // نمایش بخش نتایج - تغییر اصلی در اینجا
         document.getElementById('resultsSection').style.display = 'block';
 
-        // پیام موفقیت
-        showAlert('محاسبات با موفقی
+         // پیام موفقیت
+        showAlert('محاسبات با موفقیت انجام شد!', 'success');
+    }
+
+    function createCuttingDiagram(lengthSheets, widthSheets) {
+        const container = document.getElementById('diagramContainer');
+        container.innerHTML = '';
+
+        const visualization = document.createElement('div');
+        visualization.className = 'coil-visualization';
+
+        const maxDisplay = 10;
+        const displayLengthSheets = Math.min(lengthSheets, maxDisplay);
+        const displayWidthSheets = Math.min(widthSheets, maxDisplay);
+
+        for (let i = 0; i < displayWidthSheets; i++) {
+            const row = document.createElement('div');
+            row.className = 'coil-row';
+
+            for (let j = 0; j < displayLengthSheets; j++) {
+                const piece = document.createElement('div');
+                piece.className = 'sheet-piece';
+                piece.textContent = (i * displayLengthSheets + j + 1).toString();
+                row.appendChild(piece);
+            }
+
+            visualization.appendChild(row);
+        }
+
+        const description = document.createElement('div');
+        description.style.marginTop = '10px';
+        description.style.textAlign = 'center';
+        description.style.color = '#666';
+        description.innerHTML = `
+            <p>نمایش ${displayLengthSheets} × ${displayWidthSheets} از ${lengthSheets} × ${widthSheets} ورق</p>
+            <p>هر مربع نشان‌دهنده یک ورق است</p>
+        `;
+
+        container.appendChild(visualization);
+        container.appendChild(description);
+    }
+</script>
+</body>
+</html>
