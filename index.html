@@ -304,9 +304,9 @@
             border-color: #ffeaa7;
         }
 
-        /* مخفی کردن کامل بخش نتایج در ابتدا */
+        /* حذف !important از display */
         .results-section {
-            display: none !important;
+            display: none;
         }
     </style>
 </head>
@@ -601,11 +601,11 @@
             return;
         }
 
-        // Calculate remaining coil area and weight
+        // محاسبه مساحت باقی‌مانده و وزن ضایعات
         const remainingAreaCoilMm2 = totalAreaCoilMm2 - bestOption.usedArea;
         const wasteWeight = (remainingAreaCoilMm2 / totalAreaCoilMm2) * coilWeight;
 
-        // Display results
+        // نمایش نتایج
         document.getElementById('coilLength').textContent = coilLengthM.toFixed(2) + ' متر';
         document.getElementById('sheetsCount').textContent = bestOption.sheets + ' ورق';
         document.getElementById('wastePercentage').textContent = bestOption.waste.toFixed(2) + '%';
@@ -630,10 +630,11 @@
         // نمایش نمودار برش
         createCuttingDiagram(bestOption.lengthSheets, bestOption.widthSheets);
 
-        // نمایش بخش نتایج - تغییر اصلی در اینجا
-        document.getElementById('resultsSection').style.display = 'block';
+        // نمایش بخش نتایج
+        const resultsSection = document.getElementById('resultsSection');
+        resultsSection.style.display = 'block';
 
-         // پیام موفقیت
+        // پیام موفقیت
         showAlert('محاسبات با موفقیت انجام شد!', 'success');
     }
 
