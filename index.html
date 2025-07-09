@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang=fa dir=rtl>
+<html lang="fa" dir="rtl">
 <head>
-    <meta charset=UTF-8>
-    <meta name=viewport content=width=device-width, initial-scale=1.0>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>محاسبه‌گر بهینه‌سازی برش کویل ورق</title>
     <style>
         @font-face {
@@ -19,7 +19,7 @@
             font-style: normal;
             font-display: swap;
         }
-        {
+        * {
             box-sizing: border-box;
         }
         body {
@@ -37,16 +37,16 @@
             border-radius: 15px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             padding: 30px;
-            position: relative; /* برای قرارگیری لوگو به صورت مطلق */
+            position: relative;
         }
 
         .logo {
             position: absolute;
-            top: 20px; /* فاصله از بالا */
-            right: 20px; /* فاصله از راست */
-            width: 80px; /* عرض لوگو */
-            height: auto; /* ارتفاع خودکار برای حفظ نسبت تصویر */
-            z-index: 10; /* مطمئن شوید لوگو بالای بقیه عناصر است */
+            top: 20px;
+            right: 20px;
+            width: 80px;
+            height: auto;
+            z-index: 10;
             opacity: 0.9;
         }
 
@@ -60,7 +60,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            padding-top: 30px; /* برای جلوگیری از تداخل عنوان با لوگو */
+            padding-top: 30px;
         }
 
         .author-section {
@@ -297,22 +297,33 @@
             background-color: #d4edda;
             border-color: #c3e6cb;
         }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+
+        /* مخفی کردن کامل بخش نتایج در ابتدا */
+        .results-section {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
-<div class=container>
-    <img src=images/Saeed4.png alt=Logo class=logo>
+<div class="container">
+    <img src="images/Saeed4.png" alt="Logo" class="logo">
     <h1>محاسبه‌گر بهینه‌سازی برش کویل ورق</h1>
 
-    <div class=author-section>
+    <div class="author-section">
         <p>نویسنده: سعید گلستانی</p>
     </div>
 
-    <div class=alert alert-danger id=errorAlert>
-        <strong>خطا!</strong> <span id=errorMessage></span>
+    <div class="alert alert-danger" id="errorAlert">
+        <strong>خطا!</strong> <span id="errorMessage"></span>
     </div>
 
-    <div class=instructions>
+    <div class="instructions">
         <h3>راهنمای استفاده:</h3>
         <ul>
             <li>وزن کویل را به کیلوگرم وارد کنید (فقط اعداد مثبت)</li>
@@ -324,88 +335,88 @@
         </ul>
     </div>
 
-    <div class=input-section>
+    <div class="input-section">
         <h2>مشخصات کویل اصلی</h2>
-        <div class=input-group>
-            <div class=input-item>
-                <label for=coilWeight>وزن کویل (کیلوگرم):</label>
-                <input type=number id=coilWeight step=0.1 placeholder=مثال:1000 1000 min=0.1>
-                <div class=error-message id=coilWeightError>لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
+        <div class="input-group">
+            <div class="input-item">
+                <label for="coilWeight">وزن کویل (کیلوگرم):</label>
+                <input type="number" id="coilWeight" step="0.1" placeholder="مثال: 1000" value="1000" min="0.1">
+                <div class="error-message" id="coilWeightError">لطفاً وزن کویل را به صورت عدد مثبت وارد کنید</div>
             </div>
-            <div class=input-item>
-                <label for=coilWidth>عرض کویل (میلی‌متر):</label>
-                <input type=number id=coilWidth step=0.1 placeholder=مثال:1250 1250 min=0.1>
-                <div class=error-message id=coilWidthError>لطفاً عرض کویل را به صورت عدد مثبت وارد کنید</div>
+            <div class="input-item">
+                <label for="coilWidth">عرض کویل (میلی‌متر):</label>
+                <input type="number" id="coilWidth" step="0.1" placeholder="مثال: 1250" value="1250" min="0.1">
+                <div class="error-message" id="coilWidthError">لطفاً عرض کویل را به صورت عدد مثبت وارد کنید</div>
             </div>
-            <div class=input-item>
-                <label for=coilThickness>ضخامت کویل (میلی‌متر):</label>
-                <input type=number id=coilThickness step=0.01 placeholder=مثال:0.5 0.5 min=0.01>
-                <div class=error-message id=coilThicknessError>لطفاً ضخامت کویل را به صورت عدد مثبت وارد کنید</div>
+            <div class="input-item">
+                <label for="coilThickness">ضخامت کویل (میلی‌متر):</label>
+                <input type="number" id="coilThickness" step="0.01" placeholder="مثال: 0.5" value="0.5" min="0.01">
+                <div class="error-message" id="coilThicknessError">لطفاً ضخامت کویل را به صورت عدد مثبت وارد کنید</div>
             </div>
-            <div class=input-item>
-                <label for=density>دانسیته (گرم / سانتیمتر مکعب):</label>
-                <select id=density>
-                    <option value=7.85 selected>آهن  7.85 </option>
-                    <option value=7.84>گالوانیزه  7.84  </option>
-                    <option value=7.83> استیل  7.83 </option>
+            <div class="input-item">
+                <label for="density">دانسیته (گرم / سانتیمتر مکعب):</label>
+                <select id="density">
+                    <option value="7.85" selected>آهن - 7.85</option>
+                    <option value="7.84">گالوانیزه - 7.84</option>
+                    <option value="7.83">استیل - 7.83</option>
                 </select>
-                <div class=error-message id=densityError style="display: none;"></div>
+                <div class="error-message" id="densityError" style="display: none;"></div>
             </div>
         </div>
     </div>
 
-    <div class=input-section>
+    <div class="input-section">
         <h2>ابعاد ورق مورد نیاز</h2>
-        <div class=input-group>
-            <div class=input-item>
-                <label for=sheetLength>طول ورق (متر):</label>
-                <input type=number id=sheetLength step=0.01 placeholder=مثال:2.5 2.5 min=0.01>
-                <div class=error-message id=sheetLengthError>لطفاً طول ورق را به صورت عدد مثبت وارد کنید</div>
+        <div class="input-group">
+            <div class="input-item">
+                <label for="sheetLength">طول ورق (متر):</label>
+                <input type="number" id="sheetLength" step="0.01" placeholder="مثال: 2.5" value="2.5" min="0.01">
+                <div class="error-message" id="sheetLengthError">لطفاً طول ورق را به صورت عدد مثبت وارد کنید</div>
             </div>
-            <div class=input-item>
-                <label for=sheetWidth>عرض ورق (متر):</label>
-                <input type=number id=sheetWidth step=0.01 placeholder=مثال:1.2 1.2 min=0.01>
-                <div class=error-message id=sheetWidthError>لطفاً عرض ورق را به صورت عدد مثبت وارد کنید</div>
+            <div class="input-item">
+                <label for="sheetWidth">عرض ورق (متر):</label>
+                <input type="number" id="sheetWidth" step="0.01" placeholder="مثال: 1.2" value="1.2" min="0.01">
+                <div class="error-message" id="sheetWidthError">لطفاً عرض ورق را به صورت عدد مثبت وارد کنید</div>
             </div>
         </div>
     </div>
 
-    <button class=calculate-btn onclick=calculateOptimization()>محاسبه بهینه‌سازی</button>
+    <button class="calculate-btn" onclick="calculateOptimization()">محاسبه بهینه‌سازی</button>
 
-    <div class=results-section id=resultsSection style=display: none;>
+    <div class="results-section" id="resultsSection">
         <h2>نتایج محاسبات</h2>
-        <div class=results-grid>
-            <div class=result-card>
+        <div class="results-grid">
+            <div class="result-card">
                 <h3>طول کویل محاسبه شده</h3>
-                <div class=result-value id=coilLength>-</div>
+                <div class="result-value" id="coilLength">-</div>
             </div>
-            <div class=result-card>
+            <div class="result-card">
                 <h3>تعداد ورق قابل تولید</h3>
-                <div class=result-value id=sheetsCount>-</div>
+                <div class="result-value" id="sheetsCount">-</div>
             </div>
-            <div class=result-card>
+            <div class="result-card">
                 <h3>درصد ضایعات</h3>
-                <div class=result-value id=wastePercentage>-</div>
+                <div class="result-value" id="wastePercentage">-</div>
             </div>
-            <div class=result-card>
+            <div class="result-card">
                 <h3>مساحت مفید</h3>
-                <div class=result-value id=usefulArea>-</div>
+                <div class="result-value" id="usefulArea">-</div>
             </div>
-            <div class=result-card>
+            <div class="result-card">
                 <h3>وزن ضایعات</h3>
-                <div class=result-value id=wasteWeight>-</div>
+                <div class="result-value" id="wasteWeight">-</div>
             </div>
         </div>
 
-        <div class=cutting-diagram>
+        <div class="cutting-diagram">
             <h3>نحوه برش بهینه</h3>
-            <div class=optimize-info>
+            <div class="optimize-info">
                 <h4>توصیه‌های برش:</h4>
-                <p id=cuttingDirection>-</p>
-                <p id=cuttingPattern>-</p>
-                <p id=optimizationTips>-</p>
+                <p id="cuttingDirection">-</p>
+                <p id="cuttingPattern">-</p>
+                <p id="optimizationTips">-</p>
             </div>
-            <div class=diagram-container id=diagramContainer>
+            <div class="diagram-container" id="diagramContainer">
             </div>
         </div>
     </div>
@@ -509,6 +520,7 @@
             showAlert('ابعاد ورق (هم طول و هم عرض) نسبت به عرض کویل بزرگ است. امکان برش وجود ندارد.', 'danger');
             return;
         }
+        
         // این هشدارها فقط در صورتی نمایش داده می‌شوند که خطا نباشند
         if (sheetLengthMm > coilWidth && sheetWidthMm <= coilWidth) {
             showAlert('طول ورق از عرض کویل بزرگتر است. برای برش بهینه، شاید نیاز باشد ورق را به صورت عرضی در کویل قرار دهید.', 'warning');
@@ -544,7 +556,7 @@
         const waste2 = ((totalAreaCoilMm2 - usedArea2) / totalAreaCoilMm2) * 100;
 
         let bestOption, cuttingDirection, cuttingPattern;
-        let wasteDescription = ''; // برای توضیح دقیق‌تر ضایعات
+        let wasteDescription = '';
 
         if (totalSheets1 >= totalSheets2) {
             bestOption = {
@@ -558,8 +570,8 @@
             cuttingDirection = 'برش طولی (طول ورق در جهت طول کویل، عرض ورق در جهت عرض کویل)';
             cuttingPattern = `تعداد ورق در طول: ${sheets1_length} - تعداد ورق در عرض: ${sheets1_width}`;
 
-            const remainingLengthAtEnd = coilLengthMm - (sheets1_length * sheetLengthMm); // باقی‌مانده طول از انتهای کویل
-            const remainingWidthAtSide = coilWidth - (sheets1_width * sheetWidthMm); // باقی‌مانده عرض از کناره کویل
+            const remainingLengthAtEnd = coilLengthMm - (sheets1_length * sheetLengthMm);
+            const remainingWidthAtSide = coilWidth - (sheets1_width * sheetWidthMm);
 
             wasteDescription += `<br><br>ضایعات شامل نوارهایی به عرض ${remainingWidthAtSide.toFixed(2)} میلی‌متر در طول ${coilLengthMm.toFixed(2)} میلی‌متر (کناره‌های کویل) و تکه‌ای به طول ${remainingLengthAtEnd.toFixed(2)} میلی‌متر در عرض ${coilWidth.toFixed(2)} میلی‌متر (انتهای کویل) می‌باشد.`;
 
@@ -575,8 +587,8 @@
             cuttingDirection = 'برش عرضی (عرض ورق در جهت طول کویل، طول ورق در جهت عرض کویل)';
             cuttingPattern = `تعداد ورق در طول: ${sheets2_length} - تعداد ورق در عرض: ${sheets2_width}`;
 
-            const remainingLengthAtEnd = coilLengthMm - (sheets2_length * sheetWidthMm); // باقی‌مانده طول از انتهای کویل (اینجا عرض ورق در جهت طول)
-            const remainingWidthAtSide = coilWidth - (sheets2_width * sheetLengthMm); // باقی‌مانده عرض از کناره کویل (اینجا طول ورق در جهت عرض)
+            const remainingLengthAtEnd = coilLengthMm - (sheets2_length * sheetWidthMm);
+            const remainingWidthAtSide = coilWidth - (sheets2_width * sheetLengthMm);
 
             wasteDescription += `<br>ضایعات شامل نوارهایی به عرض ${remainingWidthAtSide.toFixed(2)} میلی‌متر در طول ${coilLengthMm.toFixed(2)} میلی‌متر (کناره‌های کویل) و تکه‌ای به طول ${remainingLengthAtEnd.toFixed(2)} میلی‌متر در عرض ${coilWidth.toFixed(2)} میلی‌متر (انتهای کویل) می‌باشد.`;
         }
@@ -584,6 +596,7 @@
         // بررسی امکان تولید ورق
         if (bestOption.sheets === 0) {
             showAlert('امکان تولید ورق با این ابعاد وجود ندارد. لطفاً ابعاد را کوچک‌تر یا کویل بزرگتر انتخاب کنید.', 'danger');
+            // مخفی کردن بخش نتایج در صورت عدم امکان تولید
             document.getElementById('resultsSection').style.display = 'none';
             return;
         }
@@ -597,7 +610,6 @@
         document.getElementById('sheetsCount').textContent = bestOption.sheets + ' ورق';
         document.getElementById('wastePercentage').textContent = bestOption.waste.toFixed(2) + '%';
         document.getElementById('usefulArea').textContent = (bestOption.usedArea / 1000000).toFixed(2) + ' متر مربع';
-
         document.getElementById('wasteWeight').textContent = wasteWeight.toFixed(2) + ' کیلوگرم';
 
         document.getElementById('cuttingDirection').textContent = `جهت برش: ${cuttingDirection}`;
@@ -618,50 +630,8 @@
         // نمایش نمودار برش
         createCuttingDiagram(bestOption.lengthSheets, bestOption.widthSheets);
 
-        // نمایش بخش نتایج
+        // نمایش بخش نتایج - تغییر اصلی در اینجا
         document.getElementById('resultsSection').style.display = 'block';
 
         // پیام موفقیت
-        showAlert('محاسبات با موفقیت انجام شد!', 'success');
-    }
-
-    function createCuttingDiagram(lengthSheets, widthSheets) {
-        const container = document.getElementById('diagramContainer');
-        container.innerHTML = '';
-
-        const visualization = document.createElement('div');
-        visualization.className = 'coil-visualization';
-
-        const maxDisplay = 10;
-        const displayLengthSheets = Math.min(lengthSheets, maxDisplay);
-        const displayWidthSheets = Math.min(widthSheets, maxDisplay);
-
-        for (let i = 0; i < displayWidthSheets; i++) {
-            const row = document.createElement('div');
-            row.className = 'coil-row';
-
-            for (let j = 0; j < displayLengthSheets; j++) {
-                const piece = document.createElement('div');
-                piece.className = 'sheet-piece';
-                piece.textContent = (i * displayLengthSheets + j + 1).toString();
-                row.appendChild(piece);
-            }
-
-            visualization.appendChild(row);
-        }
-
-        const description = document.createElement('div');
-        description.style.marginTop = '10px';
-        description.style.textAlign = 'center';
-        description.style.color = '#666';
-        description.innerHTML = `
-            <p>نمایش ${displayLengthSheets} × ${displayWidthSheets} از ${lengthSheets} × ${widthSheets} ورق</p>
-            <p>هر مربع نشان‌دهنده یک ورق است</p>
-        `;
-
-        container.appendChild(visualization);
-        container.appendChild(description);
-    }
-</script>
-</body>
-</html>
+        showAlert('محاسبات با موفقی
